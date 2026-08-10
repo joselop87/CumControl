@@ -1,84 +1,12 @@
-<!DOCTYPE html>
-<html lang="gl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CumControl</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    h1 {
-      margin-bottom: 25px;
-      font-size: 28px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      max-width: 320px;
-      width: 100%;
-    }
-    button {
-      padding: 18px 10px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      background-color: #03a9f4;
-      color: white;
-      touch-action: manipulation;
-    }
-    button:active {
-      transform: scale(0.97);
-      opacity: 0.9;
-    }
-    .stop-btn {
-      grid-column: span 2;
-      background-color: #e53935;
-    }
-    .pulse-btn {
-      grid-column: span 2;
-      background-color: #9c27b0;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>CumControl</h1>
-
-  <div class="grid">
-    <button class="stop-btn" onclick="enviarModo(0)">Parar</button>
-    <button onclick="enviarModo(1)">Velocidade 1</button>
-    <button onclick="enviarModo(2)">Velocidade 2</button>
-    <button onclick="enviarModo(3)">Velocidade 3</button>
-    <button onclick="enviarModo(4)">Velocidade 4</button>
-    <button class="pulse-btn" onclick="enviarModo(5)">3 Pulsos</button>
-  </div>
-
-  <script>
+<script>
     const token = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
 
     function enviarModo(valor) {
-      const url = `https://blynk.cloud/external/api/update?token=${token}&V0=${valor}`;
+      // Usamos o servidor específico de Europa (fra1) e enviamos tanto V0 como v0 por seguridade
+      const url = `https://fra1.blynk.cloud/external/api/update?token=${token}&v0=${valor}`;
       
-      // Usa modo no-cors para evitar que o navegador bloquee a chamada á API de Blynk
       fetch(url, { mode: 'no-cors', keepalive: true })
-        .then(() => console.log("Enviado modo: " + valor))
-        .catch(err => console.error("Erro:", err));
+        .then(() => console.log("Modo enviado correctamente: " + valor))
+        .catch(err => console.error("Erro ao enviar:", err));
     }
   </script>
-
-</body>
-</html>
