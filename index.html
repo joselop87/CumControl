@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CumControl</title>
+  <title>CumControl - 2 Motores</title>
   <style>
     body {
       font-family: system-ui, -apple-system, sans-serif;
@@ -19,22 +19,28 @@
       box-sizing: border-box;
     }
     h1 {
-      margin-bottom: 25px;
-      font-size: 28px;
+      margin-bottom: 10px;
+      font-size: 26px;
+    }
+    h2 {
+      margin: 15px 0 10px 0;
+      font-size: 18px;
+      color: #03a9f4;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+      gap: 12px;
       max-width: 320px;
       width: 100%;
+      margin-bottom: 20px;
     }
     button {
-      padding: 18px 10px;
-      font-size: 16px;
+      padding: 15px 8px;
+      font-size: 15px;
       font-weight: bold;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
       background-color: #03a9f4;
       color: white;
@@ -48,8 +54,7 @@
       grid-column: span 2;
       background-color: #e53935;
     }
-    .pulse-btn {
-      grid-column: span 2;
+    .special-btn {
       background-color: #9c27b0;
     }
   </style>
@@ -58,23 +63,32 @@
 
   <h1>CumControl</h1>
 
+  <h2>Motor 1</h2>
   <div class="grid">
-    <button class="stop-btn" onclick="enviarModo(0)">Parada</button>
-    <button onclick="enviarModo(1)">Masaje</button>
-    <button onclick="enviarModo(2)">Suave</button>
-    <button onclick="enviarModo(3)">Fuerte</button>
-    <button onclick="enviarModo(4)">Máximo CUM</button>
-    <button class="pulse-btn" onclick="enviarModo(5)">Pulsos</button>
+    <button class="stop-btn" onclick="enviarComando('v0', 0)">Parada</button>
+    <button onclick="enviarComando('v0', 1)">Masaje</button>
+    <button class="special-btn" onclick="enviarComando('v0', 2)">Golpes</button>
+    <button onclick="enviarComando('v0', 3)">Máximo CUM</button>
+    <button class="special-btn" onclick="enviarComando('v0', 4)">Presión</button>
+  </div>
+
+  <h2>Motor 2</h2>
+  <div class="grid">
+    <button class="stop-btn" onclick="enviarComando('v1', 0)">Parada</button>
+    <button onclick="enviarComando('v1', 1)">Masaje</button>
+    <button class="special-btn" onclick="enviarComando('v1', 2)">Golpes</button>
+    <button onclick="enviarComando('v1', 3)">Máximo CUM</button>
+    <button class="special-btn" onclick="enviarComando('v1', 4)">Presión</button>
   </div>
 
   <script>
     const token = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
 
-    function enviarModo(valor) {
-      const url = `https://fra1.blynk.cloud/external/api/update?token=${token}&v0=${valor}`;
+    function enviarComando(pin, valor) {
+      const url = `https://fra1.blynk.cloud/external/api/update?token=${token}&${pin}=${valor}`;
       
       fetch(url, { mode: 'no-cors', keepalive: true })
-        .then(() => console.log("Modo enviado: " + valor))
+        .then(() => console.log(`Enviado ${pin}: ${valor}`))
         .catch(err => console.error("Erro:", err));
     }
   </script>
