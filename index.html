@@ -1,97 +1,211 @@
-<!DOCTYPE html>
-<html lang="gl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CumControl - 2 Motores</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    h1 {
-      margin-bottom: 10px;
-      font-size: 26px;
-    }
-    h2 {
-      margin: 15px 0 10px 0;
-      font-size: 18px;
-      color: #03a9f4;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      max-width: 320px;
-      width: 100%;
-      margin-bottom: 20px;
-    }
-    button {
-      padding: 15px 8px;
-      font-size: 15px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background-color: #03a9f4;
-      color: white;
-      touch-action: manipulation;
-    }
-    button:active {
-      transform: scale(0.97);
-      opacity: 0.9;
-    }
-    .stop-btn {
-      grid-column: span 2;
-      background-color: #e53935;
-    }
-    .special-btn {
-      background-color: #9c27b0;
-    }
-  </style>
-</head>
-<body>
+/*
+  Proyecto: Control independiente de 2 motores DC con ESP32 y L298N
+  Motor 1: Modos orixinais (Parada, Masaje, Suave, Fuerte, Máximo CUM, Pulsos)
+  Motor 2: Novos modos (Parada, Masaje, Golpes, Máximo CUM, Presión)
+*/
 
-  <h1>CumControl</h1>
+#define BLYNK_TEMPLATE_ID "TMPL5hI5jd_xs"
+#define BLYNK_TEMPLATE_NAME "CumControl"
+#define BLYNK_AUTH_TOKEN "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt"
 
-  <h2>Motor 1</h2>
-  <div class="grid">
-    <button class="stop-btn" onclick="enviarComando('v0', 0)">Parada</button>
-    <button onclick="enviarComando('v0', 1)">Masaje</button>
-    <button class="special-btn" onclick="enviarComando('v0', 2)">Golpes</button>
-    <button onclick="enviarComando('v0', 3)">Máximo CUM</button>
-    <button class="special-btn" onclick="enviarComando('v0', 4)">Presión</button>
-  </div>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
 
-  <h2>Motor 2</h2>
-  <div class="grid">
-    <button class="stop-btn" onclick="enviarComando('v1', 0)">Parada</button>
-    <button onclick="enviarComando('v1', 1)">Masaje</button>
-    <button class="special-btn" onclick="enviarComando('v1', 2)">Golpes</button>
-    <button onclick="enviarComando('v1', 3)">Máximo CUM</button>
-    <button class="special-btn" onclick="enviarComando('v1', 4)">Presión</button>
-  </div>
+char ssid[] = "Fotoprezzo";
+char pass[] = "movilessat_2021";
 
-  <script>
-    const token = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
+// Pins Motor 1
+const int ENA_PIN = 14; 
+const int IN1_PIN = 27; 
+const int IN2_PIN = 26; 
 
-    function enviarComando(pin, valor) {
-      const url = `https://fra1.blynk.cloud/external/api/update?token=${token}&${pin}=${valor}`;
-      
-      fetch(url, { mode: 'no-cors', keepalive: true })
-        .then(() => console.log(`Enviado ${pin}: ${valor}`))
-        .catch(err => console.error("Erro:", err));
+// Pins Motor 2
+const int ENB_PIN = 15; 
+const int IN3_PIN = 12; 
+const int IN4_PIN = 13; 
+
+const int freq = 5000;
+const int resolution = 8; 
+
+// Estado Motor 1 (Orixinal)
+int modoActual1 = 0;
+unsigned long tiempoAnterior1 = 0;
+int pasoPulso1 = 0;
+int potenciaActual1 = 0;
+int duracionActual1 = 0;
+
+// Estado Motor 2 (Novo)
+int modoActual2 = 0;
+unsigned long tiempoAnterior2 = 0;
+int pasoModo2 = 0;
+int potenciaMin2 = 180, potenciaMax2 = 255;
+int duracionRampa2 = 2000;
+
+void aplicarVelocidadMotor1(int valorPWM) {
+  if (valorPWM <= 0) {
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, LOW);
+    ledcWrite(ENA_PIN, 0);
+  } else {
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+    ledcWrite(ENA_PIN, valorPWM);
+  }
+}
+
+void aplicarVelocidadMotor2(int valorPWM) {
+  if (valorPWM <= 0) {
+    digitalWrite(IN3_PIN, LOW);
+    digitalWrite(IN4_PIN, LOW);
+    ledcWrite(ENB_PIN, 0);
+  } else {
+    digitalWrite(IN3_PIN, HIGH);
+    digitalWrite(IN4_PIN, LOW);
+    ledcWrite(ENB_PIN, valorPWM);
+  }
+}
+
+// Control Motor 1 (V0) - Configuración Orixinal
+BLYNK_WRITE(V0) {
+  modoActual1 = param.asInt();
+  pasoPulso1 = 0;
+  tiempoAnterior1 = millis();
+
+  switch (modoActual1) {
+    case 0: aplicarVelocidadMotor1(0);   break; // Parada
+    case 1: aplicarVelocidadMotor1(180); break; // Masaje
+    case 2: aplicarVelocidadMotor1(200); break; // Suave
+    case 3: aplicarVelocidadMotor1(220); break; // Fuerte
+    case 4: aplicarVelocidadMotor1(255); break; // Máximo CUM
+    case 5: // Pulsos orixinais (6 aleatorios)
+      potenciaActual1 = random(220, 256);
+      duracionActual1 = random(1000, 3001);
+      aplicarVelocidadMotor1(potenciaActual1); 
+      break;
+    default: 
+      aplicarVelocidadMotor1(0); 
+      break;
+  }
+}
+
+// Control Motor 2 (V1) - Configuración Nova
+BLYNK_WRITE(V1) {
+  modoActual2 = param.asInt();
+  pasoModo2 = 0;
+  tiempoAnterior2 = millis();
+
+  switch (modoActual2) {
+    case 0: aplicarVelocidadMotor2(0);   break; // Parada
+    case 1: aplicarVelocidadMotor2(180); break; // Masaje
+    case 2: // Golpes
+      aplicarVelocidadMotor2(220); 
+      break;
+    case 3: aplicarVelocidadMotor2(255); break; // Máximo CUM
+    case 4: // Presión
+      potenciaMin2 = random(130, 180);
+      potenciaMax2 = random(220, 256);
+      duracionRampa2 = random(1500, 3501);
+      aplicarVelocidadMotor2(potenciaMin2);
+      break;
+    default: 
+      aplicarVelocidadMotor2(0); 
+      break;
+  }
+}
+
+void gestionarEfectosMotor1() {
+  if (modoActual1 != 5) return;
+  unsigned long tiempoActual = millis();
+
+  if (pasoPulso1 % 2 == 0) {
+    if (tiempoActual - tiempoAnterior1 >= duracionActual1) {
+      aplicarVelocidadMotor1(0);
+      pasoPulso1++;
+      tiempoAnterior1 = tiempoActual;
     }
-  </script>
+  } else if (pasoPulso1 < 11) {
+    if (tiempoActual - tiempoAnterior1 >= 400) {
+      potenciaActual1 = random(220, 256);
+      duracionActual1 = random(1000, 3001);
+      aplicarVelocidadMotor1(potenciaActual1);
+      pasoPulso1++;
+      tiempoAnterior1 = tiempoActual;
+    }
+  } else if (pasoPulso1 == 11) {
+    if (tiempoActual - tiempoAnterior1 >= 5000) {
+      pasoPulso1 = 0;
+      potenciaActual1 = random(220, 256);
+      duracionActual1 = random(1000, 3001);
+      aplicarVelocidadMotor1(potenciaActual1);
+      tiempoAnterior1 = tiempoActual;
+    }
+  }
+}
 
-</body>
-</html>
+void gestionarEfectosMotor2() {
+  unsigned long tiempoActual = millis();
+
+  // Modo GOLPES (Modo 2)
+  if (modoActual2 == 2) {
+    if (pasoModo2 == 0) {
+      if (tiempoActual - tiempoAnterior2 >= 1000) {
+        aplicarVelocidadMotor2(0);
+        pasoModo2 = 1;
+        tiempoAnterior2 = tiempoActual;
+      }
+    } else {
+      if (tiempoActual - tiempoAnterior2 >= 500) {
+        aplicarVelocidadMotor2(220);
+        pasoModo2 = 0;
+        tiempoAnterior2 = tiempoActual;
+      }
+    }
+  }
+
+  // Modo PRESIÓN (Modo 4)
+  if (modoActual2 == 4) {
+    if (pasoModo2 == 0) {
+      unsigned long transcurrido = tiempoActual - tiempoAnterior2;
+      if (transcurrido < (unsigned long)duracionRampa2) {
+        int pwmActual = map(transcurrido, 0, duracionRampa2, potenciaMin2, potenciaMax2);
+        aplicarVelocidadMotor2(pwmActual);
+      } else {
+        aplicarVelocidadMotor2(0);
+        pasoModo2 = 1;
+        tiempoAnterior2 = tiempoActual;
+      }
+    } else {
+      if (tiempoActual - tiempoAnterior2 >= 400) {
+        potenciaMin2 = random(130, 180);
+        potenciaMax2 = random(220, 256);
+        duracionRampa2 = random(1500, 3501);
+        pasoModo2 = 0;
+        tiempoAnterior2 = tiempoActual;
+      }
+    }
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(IN1_PIN, OUTPUT);
+  pinMode(IN2_PIN, OUTPUT);
+  pinMode(IN3_PIN, OUTPUT);
+  pinMode(IN4_PIN, OUTPUT);
+
+  ledcAttach(ENA_PIN, freq, resolution);
+  ledcAttach(ENB_PIN, freq, resolution);
+
+  aplicarVelocidadMotor1(0);
+  aplicarVelocidadMotor2(0);
+
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+}
+
+void loop() {
+  Blynk.run();
+  gestionarEfectosMotor1();
+  gestionarEfectosMotor2();
+}
