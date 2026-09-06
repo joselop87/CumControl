@@ -129,6 +129,10 @@
       transform: scale(0.98);
       box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
     }
+
+    iframe {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -140,17 +144,17 @@
     <div class="card pene">
       <h2>Pene</h2>
       <div class="modes-grid" id="gridPene">
-        <button class="btn-mode active" onclick="setMode('V1', 0, this)">0: Parada</button>
-        <button class="btn-mode" onclick="setMode('V1', 1, this)">1: Masaje</button>
-        <button class="btn-mode" onclick="setMode('V1', 2, this)">2: Pulsos</button>
-        <button class="btn-mode" onclick="setMode('V1', 3, this)">3: In Crescendo</button>
-        <button class="btn-mode" onclick="setMode('V1', 4, this)">4: Caos</button>
-        <button class="btn-mode" onclick="setMode('V1', 5, this)">5: Máximo CUM</button>
+        <button class="btn-mode active" onclick="setMode('v1', 0, this)">0: Parada</button>
+        <button class="btn-mode" onclick="setMode('v1', 1, this)">1: Masaje</button>
+        <button class="btn-mode" onclick="setMode('v1', 2, this)">2: Pulsos</button>
+        <button class="btn-mode" onclick="setMode('v1', 3, this)">3: In Crescendo</button>
+        <button class="btn-mode" onclick="setMode('v1', 4, this)">4: Caos</button>
+        <button class="btn-mode" onclick="setMode('v1', 5, this)">5: Máximo CUM</button>
       </div>
 
       <button class="btn-latigo" 
-              onmousedown="sendLatigo('V3', 1)" onmouseup="sendLatigo('V3', 0)"
-              ontouchstart="sendLatigo('V3', 1)" ontouchend="sendLatigo('V3', 0)">
+              onmousedown="sendLatigo('v3', 1)" onmouseup="sendLatigo('v3', 0)"
+              ontouchstart="sendLatigo('v3', 1)" ontouchend="sendLatigo('v3', 0)">
         Látigo Pene
       </button>
     </div>
@@ -159,42 +163,32 @@
     <div class="card testiculos">
       <h2>Testículos</h2>
       <div class="modes-grid" id="gridTest">
-        <button class="btn-mode active" onclick="setMode('V2', 0, this)">0: Parada</button>
-        <button class="btn-mode" onclick="setMode('V2', 1, this)">1: Masaje</button>
-        <button class="btn-mode" onclick="setMode('V2', 2, this)">2: Golpes</button>
-        <button class="btn-mode" onclick="setMode('V2', 3, this)">3: In Crescendo</button>
-        <button class="btn-mode" onclick="setMode('V2', 4, this)">4: Caos</button>
-        <button class="btn-mode" onclick="setMode('V2', 5, this)">5: Máximo CUM</button>
+        <button class="btn-mode active" onclick="setMode('v2', 0, this)">0: Parada</button>
+        <button class="btn-mode" onclick="setMode('v2', 1, this)">1: Masaje</button>
+        <button class="btn-mode" onclick="setMode('v2', 2, this)">2: Golpes</button>
+        <button class="btn-mode" onclick="setMode('v2', 3, this)">3: In Crescendo</button>
+        <button class="btn-mode" onclick="setMode('v2', 4, this)">4: Caos</button>
+        <button class="btn-mode" onclick="setMode('v2', 5, this)">5: Máximo CUM</button>
       </div>
 
       <button class="btn-latigo" 
-              onmousedown="sendLatigo('V4', 1)" onmouseup="sendLatigo('V4', 0)"
-              ontouchstart="sendLatigo('V4', 1)" ontouchend="sendLatigo('V4', 0)">
+              onmousedown="sendLatigo('v4', 1)" onmouseup="sendLatigo('v4', 0)"
+              ontouchstart="sendLatigo('v4', 1)" ontouchend="sendLatigo('v4', 0)">
         Látigo Testículos
       </button>
     </div>
   </div>
 
+  <!-- Marco oculto para forzar as peticións sen bloqueo do navegador -->
+  <iframe name="blynk_frame" id="blynk_frame"></iframe>
+
   <script>
     const BLYNK_AUTH_TOKEN = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
 
     function sendBlynkCommand(pin, value) {
-      const pinUpper = pin.toUpperCase();
-      const pinLower = pin.toLowerCase();
-      const timestamp = Date.now();
-
-      // Envio dobre para asegurar compatibilidade de formato de datastream no servidor de Blynk
-      const url1 = `https://fra1.blynk.cloud/external/api/update?token=${BLYNK_AUTH_TOKEN}&${pinUpper}=${value}&_=${timestamp}`;
-      const url2 = `https://fra1.blynk.cloud/external/api/update?token=${BLYNK_AUTH_TOKEN}&${pinLower}=${value}&_=${timestamp}`;
-
-      // Petición directa mediante obxecto Image
-      const img1 = new Image();
-      img1.src = url1;
-      const img2 = new Image();
-      img2.src = url2;
-
-      // Intentar tamén por fetch sen bloquear a execución
-      fetch(url1, { mode: 'no-cors' }).catch(() => {});
+      const frame = document.getElementById('blynk_frame');
+      const url = `https://fra1.blynk.cloud/external/api/update?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}&_=${Date.now()}`;
+      frame.src = url;
     }
 
     function setMode(pin, value, btn) {
