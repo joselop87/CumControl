@@ -176,7 +176,6 @@
   </div>
 
   <script>
-    const BLYNK_TEMPLATE_ID = "TMPL5hI5jd_xs";
     const BLYNK_AUTH_TOKEN = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
     const BLYNK_SERVER = "https://fra1.blynk.cloud/external/api/update";
 
@@ -185,12 +184,12 @@
       parent.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`)
+      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`, { mode: 'no-cors' })
         .catch(err => console.error("Error al enviar modo:", err));
     }
 
     function sendLatigo(pin, state) {
-      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${state}`)
+      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${state}`, { mode: 'no-cors' })
         .catch(err => console.error("Error al enviar látigo:", err));
     }
   </script>
