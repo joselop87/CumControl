@@ -10,7 +10,6 @@
       --card-bg: #12121a;
       --pene-color: #00e5ff;
       --test-color: #bd00ff;
-      --latigo-color: #ff0055;
       --text: #ffffff;
       --btn-bg: #1a1a26;
       --btn-border: #2a2a3d;
@@ -85,6 +84,7 @@
       font-weight: 600;
       cursor: pointer;
       text-align: center;
+      border: 1px solid var(--btn-border);
     }
 
     .btn-mode:active {
@@ -104,30 +104,6 @@
       box-shadow: 0 0 10px rgba(189, 0, 255, 0.5);
       border-color: var(--test-color);
     }
-
-    .btn-latigo {
-      width: 100%;
-      padding: 16px;
-      border-radius: 8px;
-      border: none;
-      background: var(--latigo-color);
-      color: white;
-      font-weight: bold;
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-      margin-top: 5px;
-    }
-
-    .btn-latigo:active {
-      transform: scale(0.98);
-      box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
-    }
   </style>
 </head>
 <body>
@@ -135,42 +111,29 @@
   <h1>CumControl V2.0</h1>
 
   <div class="container">
-    <!-- PENE -->
+    <!-- MOTOR 1: PENE (Usa V0) -->
     <div class="card pene">
-      <h2>Pene</h2>
+      <h2>Pene (Motor 1)</h2>
       <div class="modes-grid">
-        <button class="btn-mode active" onclick="setMode('V1', 0, this)">0: Parada</button>
-        <button class="btn-mode" onclick="setMode('V1', 1, this)">1: Masaje</button>
-        <button class="btn-mode" onclick="setMode('V1', 2, this)">2: Pulsos</button>
-        <button class="btn-mode" onclick="setMode('V1', 3, this)">3: In Crescendo</button>
-        <button class="btn-mode" onclick="setMode('V1', 4, this)">4: Caos</button>
-        <button class="btn-mode" onclick="setMode('V1', 5, this)">5: Máximo CUM</button>
+        <button class="btn-mode active" onclick="setMode('V0', 0, this)">0: Parada</button>
+        <button class="btn-mode" onclick="setMode('V0', 1, this)">1: Suave</button>
+        <button class="btn-mode" onclick="setMode('V0', 2, this)">2: Medio</button>
+        <button class="btn-mode" onclick="setMode('V0', 3, this)">3: Alto</button>
+        <button class="btn-mode" onclick="setMode('V0', 4, this)">4: Máximo</button>
+        <button class="btn-mode" onclick="setMode('V0', 5, this)">5: Aleatorio</button>
       </div>
-
-      <button class="btn-latigo" 
-              onmousedown="sendLatigo('V3', 1)" onmouseup="sendLatigo('V3', 0)"
-              ontouchstart="sendLatigo('V3', 1)" ontouchend="sendLatigo('V3', 0)">
-        Látigo Pene
-      </button>
     </div>
 
-    <!-- TESTÍCULOS -->
+    <!-- MOTOR 2: TESTÍCULOS (Usa V1) -->
     <div class="card testiculos">
-      <h2>Testículos</h2>
+      <h2>Testículos (Motor 2)</h2>
       <div class="modes-grid">
-        <button class="btn-mode active" onclick="setMode('V2', 0, this)">0: Parada</button>
-        <button class="btn-mode" onclick="setMode('V2', 1, this)">1: Masaje</button>
-        <button class="btn-mode" onclick="setMode('V2', 2, this)">2: Golpes</button>
-        <button class="btn-mode" onclick="setMode('V2', 3, this)">3: In Crescendo</button>
-        <button class="btn-mode" onclick="setMode('V2', 4, this)">4: Caos</button>
-        <button class="btn-mode" onclick="setMode('V2', 5, this)">5: Máximo CUM</button>
+        <button class="btn-mode active" onclick="setMode('V1', 0, this)">0: Parada</button>
+        <button class="btn-mode" onclick="setMode('V1', 1, this)">1: Suave</button>
+        <button class="btn-mode" onclick="setMode('V1', 2, this)">2: Pulsos</button>
+        <button class="btn-mode" onclick="setMode('V1', 3, this)">3: Máximo</button>
+        <button class="btn-mode" onclick="setMode('V1', 4, this)">4: Rampa</button>
       </div>
-
-      <button class="btn-latigo" 
-              onmousedown="sendLatigo('V4', 1)" onmouseup="sendLatigo('V4', 0)"
-              ontouchstart="sendLatigo('V4', 1)" ontouchend="sendLatigo('V4', 0)">
-        Látigo Testículos
-      </button>
     </div>
   </div>
 
@@ -178,20 +141,13 @@
     const BLYNK_AUTH_TOKEN = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
     const BLYNK_SERVER = "https://fra1.blynk.cloud/external/api/update";
 
-    function sendCommand(pin, value) {
-      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`, { mode: 'no-cors' })
-        .catch(err => console.error(err));
-    }
-
     function setMode(pin, value, btn) {
       const parent = btn.parentElement;
       parent.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      sendCommand(pin, value);
-    }
 
-    function sendLatigo(pin, state) {
-      sendCommand(pin, state);
+      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`, { mode: 'no-cors' })
+        .catch(err => console.error(err));
     }
   </script>
 </body>
