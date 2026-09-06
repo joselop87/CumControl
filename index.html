@@ -177,11 +177,24 @@
 
   <script>
     const BLYNK_AUTH_TOKEN = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
-    const BLYNK_SERVER = "https://fra1.blynk.cloud/external/api/update";
 
     function sendBlynkCommand(pin, value) {
-      const img = new Image();
-      img.src = `${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}&_=${Date.now()}`;
+      const pinUpper = pin.toUpperCase();
+      const pinLower = pin.toLowerCase();
+      const timestamp = Date.now();
+
+      // Envio dobre para asegurar compatibilidade de formato de datastream no servidor de Blynk
+      const url1 = `https://fra1.blynk.cloud/external/api/update?token=${BLYNK_AUTH_TOKEN}&${pinUpper}=${value}&_=${timestamp}`;
+      const url2 = `https://fra1.blynk.cloud/external/api/update?token=${BLYNK_AUTH_TOKEN}&${pinLower}=${value}&_=${timestamp}`;
+
+      // Petición directa mediante obxecto Image
+      const img1 = new Image();
+      img1.src = url1;
+      const img2 = new Image();
+      img2.src = url2;
+
+      // Intentar tamén por fetch sen bloquear a execución
+      fetch(url1, { mode: 'no-cors' }).catch(() => {});
     }
 
     function setMode(pin, value, btn) {
