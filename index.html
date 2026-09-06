@@ -1,154 +1,98 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="gl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CumControl V2.0</title>
+  <title>CumControl - 2 Motores</title>
   <style>
-    :root {
-      --bg: #0a0a0f;
-      --card-bg: #12121a;
-      --pene-color: #00e5ff;
-      --test-color: #bd00ff;
-      --text: #ffffff;
-      --btn-bg: #1a1a26;
-      --btn-border: #2a2a3d;
-    }
-
     body {
-      background-color: var(--bg);
-      color: var(--text);
       font-family: system-ui, -apple-system, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      padding: 15px;
+      padding: 20px;
       box-sizing: border-box;
     }
-
     h1 {
-      font-size: 1.8rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-      text-align: center;
+      margin-bottom: 10px;
+      font-size: 26px;
     }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      width: 100%;
-      max-width: 420px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 15px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .card.pene { border-top: 4px solid var(--pene-color); }
-    .card.testiculos { border-top: 4px solid var(--test-color); }
-
     h2 {
-      margin: 0 0 5px 0;
-      font-size: 1.3rem;
+      margin: 15px 0 10px 0;
+      font-size: 18px;
+      color: #03a9f4;
     }
-
-    .card.pene h2 { color: var(--pene-color); }
-    .card.testiculos h2 { color: var(--test-color); }
-
-    .modes-grid {
+    .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 12px;
+      max-width: 320px;
+      width: 100%;
+      margin-bottom: 20px;
     }
-
-    .btn-mode {
-      padding: 12px 8px;
-      border-radius: 8px;
-      background: var(--btn-bg);
-      color: #ccc;
-      border: 1px solid var(--btn-border);
-      font-size: 0.9rem;
-      font-weight: 600;
+    button {
+      padding: 15px 8px;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      text-align: center;
-      border: 1px solid var(--btn-border);
+      background-color: #03a9f4;
+      color: white;
+      touch-action: manipulation;
     }
-
-    .btn-mode:active {
-      transform: scale(0.96);
+    button:active {
+      transform: scale(0.97);
+      opacity: 0.9;
     }
-
-    .card.pene .btn-mode.active {
-      background: var(--pene-color);
-      color: #000;
-      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-      border-color: var(--pene-color);
+    .stop-btn {
+      grid-column: span 2;
+      background-color: #e53935;
     }
-
-    .card.testiculos .btn-mode.active {
-      background: var(--test-color);
-      color: #fff;
-      box-shadow: 0 0 10px rgba(189, 0, 255, 0.5);
-      border-color: var(--test-color);
+    .special-btn {
+      background-color: #9c27b0;
     }
   </style>
 </head>
 <body>
 
-  <h1>CumControl V2.0</h1>
+  <h1>CumControl</h1>
 
-  <div class="container">
-    <!-- MOTOR 1: PENE (Usa V0) -->
-    <div class="card pene">
-      <h2>Pene (Motor 1)</h2>
-      <div class="modes-grid">
-        <button class="btn-mode active" onclick="setMode('V0', 0, this)">0: Parada</button>
-        <button class="btn-mode" onclick="setMode('V0', 1, this)">1: Suave</button>
-        <button class="btn-mode" onclick="setMode('V0', 2, this)">2: Medio</button>
-        <button class="btn-mode" onclick="setMode('V0', 3, this)">3: Alto</button>
-        <button class="btn-mode" onclick="setMode('V0', 4, this)">4: Máximo</button>
-        <button class="btn-mode" onclick="setMode('V0', 5, this)">5: Aleatorio</button>
-      </div>
-    </div>
+  <h2>Motor 1</h2>
+  <div class="grid">
+    <button class="stop-btn" onclick="enviarComando('v0', 0)">Parada</button>
+    <button onclick="enviarComando('v0', 1)">Masaje</button>
+    <button onclick="enviarComando('v0', 2)">Suave</button>
+    <button onclick="enviarComando('v0', 3)">Fuerte</button>
+    <button onclick="enviarComando('v0', 4)">Máximo CUM</button>
+    <button class="special-btn" onclick="enviarComando('v0', 5)">Pulsos</button>
+  </div>
 
-    <!-- MOTOR 2: TESTÍCULOS (Usa V1) -->
-    <div class="card testiculos">
-      <h2>Testículos (Motor 2)</h2>
-      <div class="modes-grid">
-        <button class="btn-mode active" onclick="setMode('V1', 0, this)">0: Parada</button>
-        <button class="btn-mode" onclick="setMode('V1', 1, this)">1: Suave</button>
-        <button class="btn-mode" onclick="setMode('V1', 2, this)">2: Pulsos</button>
-        <button class="btn-mode" onclick="setMode('V1', 3, this)">3: Máximo</button>
-        <button class="btn-mode" onclick="setMode('V1', 4, this)">4: Rampa</button>
-      </div>
-    </div>
+  <h2>Motor 2</h2>
+  <div class="grid">
+    <button class="stop-btn" onclick="enviarComando('v1', 0)">Parada</button>
+    <button onclick="enviarComando('v1', 1)">Masaje</button>
+    <button class="special-btn" onclick="enviarComando('v1', 2)">Golpes</button>
+    <button onclick="enviarComando('v1', 3)">Máximo CUM</button>
+    <button class="special-btn" onclick="enviarComando('v1', 4)">Presión</button>
   </div>
 
   <script>
-    const BLYNK_AUTH_TOKEN = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
-    const BLYNK_SERVER = "https://fra1.blynk.cloud/external/api/update";
+    const token = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
 
-    function setMode(pin, value, btn) {
-      const parent = btn.parentElement;
-      parent.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`, { mode: 'no-cors' })
-        .catch(err => console.error(err));
+    function enviarComando(pin, valor) {
+      const url = `https://fra1.blynk.cloud/external/api/update?token=${token}&${pin}=${valor}`;
+      
+      fetch(url, { mode: 'no-cors', keepalive: true })
+        .then(() => console.log(`Enviado ${pin}: ${valor}`))
+        .catch(err => console.error("Erro:", err));
     }
   </script>
+
 </body>
 </html>
