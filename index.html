@@ -176,16 +176,16 @@
   </div>
 
   <script>
-    const BLYNK_AUTH_TOKEN = "uj-8DUfu - ••••"; // Substitúe polo teu token real
-    const BLYNK_SERVER = "https://blynk.cloud/external/api/update";
+    // Configuración Blynk
+    const BLYNK_TEMPLATE_ID = "TMPL5hI5jd_xs";
+    const BLYNK_AUTH_TOKEN = "uj-8DUfu - ••••"; // PON AQUÍ O TEU TOKEN DE DISPOSITIVO DE BLYNK
+    const BLYNK_SERVER = "https://fra1.blynk.cloud/external/api/update";
 
     function setMode(pin, value, btn) {
-      // Cambiar clase active no grupo de botóns
       const parent = btn.parentElement;
       parent.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Enviar a Blynk REST API
       fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`)
         .catch(err => console.error("Error al enviar modo:", err));
     }
