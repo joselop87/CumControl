@@ -12,6 +12,8 @@
       --test-color: #bd00ff;
       --latigo-color: #ff0055;
       --text: #ffffff;
+      --btn-bg: #1a1a26;
+      --btn-border: #2a2a3d;
     }
 
     body {
@@ -24,15 +26,15 @@
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      padding: 20px;
+      padding: 15px;
       box-sizing: border-box;
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 1.8rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
       text-align: center;
     }
@@ -40,43 +42,68 @@
     .container {
       display: flex;
       flex-direction: column;
-      gap: 25px;
+      gap: 20px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
     }
 
     .card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 20px;
+      padding: 15px;
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
       border: 1px solid rgba(255, 255, 255, 0.05);
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
     }
 
     .card.pene { border-top: 4px solid var(--pene-color); }
     .card.testiculos { border-top: 4px solid var(--test-color); }
 
     h2 {
-      margin: 0;
-      font-size: 1.4rem;
+      margin: 0 0 5px 0;
+      font-size: 1.3rem;
     }
 
     .card.pene h2 { color: var(--pene-color); }
     .card.testiculos h2 { color: var(--test-color); }
 
-    select {
-      width: 100%;
-      padding: 12px;
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .btn-mode {
+      padding: 12px 8px;
       border-radius: 8px;
-      background: #1a1a26;
-      color: #fff;
-      border: 1px solid #333;
-      font-size: 1rem;
-      outline: none;
+      background: var(--btn-bg);
+      color: #ccc;
+      border: 1px solid var(--btn-border);
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-mode:active {
+      transform: scale(0.96);
+    }
+
+    .card.pene .btn-mode.active {
+      background: var(--pene-color);
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+      border-color: var(--pene-color);
+    }
+
+    .card.testiculos .btn-mode.active {
+      background: var(--test-color);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(189, 0, 255, 0.5);
+      border-color: var(--test-color);
     }
 
     .btn-latigo {
@@ -95,6 +122,7 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
+      margin-top: 5px;
     }
 
     .btn-latigo:active {
@@ -105,20 +133,20 @@
 </head>
 <body>
 
-  <h1>CumControl V2.0</h1>
+  <h1>CumControl V2.0 Más Chorro</h1>
 
   <div class="container">
     <!-- PENE -->
     <div class="card pene">
       <h2>Pene</h2>
-      <select id="modePene" onchange="sendMode('V1', this.value)">
-        <option value="0">0: Parada</option>
-        <option value="1">1: Masaje</option>
-        <option value="2">2: Pulsos</option>
-        <option value="3">3: In Crescendo</option>
-        <option value="4">4: Caos</option>
-        <option value="5">5: Máximo CUM</option>
-      </select>
+      <div class="modes-grid" id="gridPene">
+        <button class="btn-mode active" onclick="setMode('V1', 0, this)">0: Parada</button>
+        <button class="btn-mode" onclick="setMode('V1', 1, this)">1: Masaje</button>
+        <button class="btn-mode" onclick="setMode('V1', 2, this)">2: Pulsos</button>
+        <button class="btn-mode" onclick="setMode('V1', 3, this)">3: In Crescendo</button>
+        <button class="btn-mode" onclick="setMode('V1', 4, this)">4: Caos</button>
+        <button class="btn-mode" onclick="setMode('V1', 5, this)">5: Máximo CUM</button>
+      </div>
 
       <button class="btn-latigo" 
               onmousedown="sendLatigo('V3', 1)" onmouseup="sendLatigo('V3', 0)"
@@ -130,14 +158,14 @@
     <!-- TESTÍCULOS -->
     <div class="card testiculos">
       <h2>Testículos</h2>
-      <select id="modeTest" onchange="sendMode('V2', this.value)">
-        <option value="0">0: Parada</option>
-        <option value="1">1: Masaje</option>
-        <option value="2">2: Golpes</option>
-        <option value="3">3: In Crescendo</option>
-        <option value="4">4: Caos</option>
-        <option value="5">5: Máximo CUM</option>
-      </select>
+      <div class="modes-grid" id="gridTest">
+        <button class="btn-mode active" onclick="setMode('V2', 0, this)">0: Parada</button>
+        <button class="btn-mode" onclick="setMode('V2', 1, this)">1: Masaje</button>
+        <button class="btn-mode" onclick="setMode('V2', 2, this)">2: Golpes</button>
+        <button class="btn-mode" onclick="setMode('V2', 3, this)">3: In Crescendo</button>
+        <button class="btn-mode" onclick="setMode('V2', 4, this)">4: Caos</button>
+        <button class="btn-mode" onclick="setMode('V2', 5, this)">5: Máximo CUM</button>
+      </div>
 
       <button class="btn-latigo" 
               onmousedown="sendLatigo('V4', 1)" onmouseup="sendLatigo('V4', 0)"
@@ -151,7 +179,13 @@
     const BLYNK_AUTH_TOKEN = "uj-8DUfu - ••••"; // Substitúe polo teu token real
     const BLYNK_SERVER = "https://blynk.cloud/external/api/update";
 
-    function sendMode(pin, value) {
+    function setMode(pin, value, btn) {
+      // Cambiar clase active no grupo de botóns
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Enviar a Blynk REST API
       fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`)
         .catch(err => console.error("Error al enviar modo:", err));
     }
