@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html lang="gl">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CumControl - 2 Motores</title>
+  <title>CumControl V2.0 Más Chorro</title>
   <style>
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: #12121a;
+      --pene-color: #00e5ff;
+      --test-color: #bd00ff;
+      --latigo-color: #ff0055;
+      --text: #ffffff;
+    }
+
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -18,81 +27,139 @@
       padding: 20px;
       box-sizing: border-box;
     }
+
     h1 {
-      margin-bottom: 10px;
-      font-size: 26px;
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 25px;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+      text-align: center;
     }
-    h2 {
-      margin: 15px 0 10px 0;
-      font-size: 18px;
-      color: #03a9f4;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      max-width: 320px;
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
       width: 100%;
-      margin-bottom: 20px;
+      max-width: 400px;
     }
-    button {
-      padding: 15px 8px;
-      font-size: 15px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .card.pene { border-top: 4px solid var(--pene-color); }
+    .card.testiculos { border-top: 4px solid var(--test-color); }
+
+    h2 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .card.pene h2 { color: var(--pene-color); }
+    .card.testiculos h2 { color: var(--test-color); }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background: #1a1a26;
+      color: #fff;
+      border: 1px solid #333;
+      font-size: 1rem;
+      outline: none;
       cursor: pointer;
-      background-color: #03a9f4;
+    }
+
+    .btn-latigo {
+      width: 100%;
+      padding: 16px;
+      border-radius: 8px;
+      border: none;
+      background: var(--latigo-color);
       color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+      user-select: none;
+      -webkit-user-select: none;
       touch-action: manipulation;
     }
-    button:active {
-      transform: scale(0.97);
-      opacity: 0.9;
-    }
-    .stop-btn {
-      grid-column: span 2;
-      background-color: #e53935;
-    }
-    .special-btn {
-      background-color: #9c27b0;
+
+    .btn-latigo:active {
+      transform: scale(0.98);
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
     }
   </style>
 </head>
 <body>
 
-  <h1>CumControl</h1>
+  <h1>CumControl V2.0</h1>
 
-  <h2>Motor 1</h2>
-  <div class="grid">
-    <button class="stop-btn" onclick="enviarComando('v0', 0)">Parada</button>
-    <button onclick="enviarComando('v0', 1)">Masaje</button>
-    <button onclick="enviarComando('v0', 2)">Suave</button>
-    <button onclick="enviarComando('v0', 3)">Fuerte</button>
-    <button onclick="enviarComando('v0', 4)">Máximo CUM</button>
-    <button class="special-btn" onclick="enviarComando('v0', 5)">Pulsos</button>
-  </div>
+  <div class="container">
+    <!-- PENE -->
+    <div class="card pene">
+      <h2>Pene</h2>
+      <select id="modePene" onchange="sendMode('V1', this.value)">
+        <option value="0">0: Parada</option>
+        <option value="1">1: Masaje</option>
+        <option value="2">2: Pulsos</option>
+        <option value="3">3: In Crescendo</option>
+        <option value="4">4: Caos</option>
+        <option value="5">5: Máximo CUM</option>
+      </select>
 
-  <h2>Motor 2</h2>
-  <div class="grid">
-    <button class="stop-btn" onclick="enviarComando('v1', 0)">Parada</button>
-    <button onclick="enviarComando('v1', 1)">Masaje</button>
-    <button class="special-btn" onclick="enviarComando('v1', 2)">Golpes</button>
-    <button onclick="enviarComando('v1', 3)">Máximo CUM</button>
-    <button class="special-btn" onclick="enviarComando('v1', 4)">Presión</button>
+      <button class="btn-latigo" 
+              onmousedown="sendLatigo('V3', 1)" onmouseup="sendLatigo('V3', 0)"
+              ontouchstart="sendLatigo('V3', 1)" ontouchend="sendLatigo('V3', 0)">
+        Látigo Pene
+      </button>
+    </div>
+
+    <!-- TESTÍCULOS -->
+    <div class="card testiculos">
+      <h2>Testículos</h2>
+      <select id="modeTest" onchange="sendMode('V2', this.value)">
+        <option value="0">0: Parada</option>
+        <option value="1">1: Masaje</option>
+        <option value="2">2: Golpes</option>
+        <option value="3">3: In Crescendo</option>
+        <option value="4">4: Caos</option>
+        <option value="5">5: Máximo CUM</option>
+      </select>
+
+      <button class="btn-latigo" 
+              onmousedown="sendLatigo('V4', 1)" onmouseup="sendLatigo('V4', 0)"
+              ontouchstart="sendLatigo('V4', 1)" ontouchend="sendLatigo('V4', 0)">
+        Látigo Testículos
+      </button>
+    </div>
   </div>
 
   <script>
-    const token = "uj-8DUfuf8pIkGRzt9vqR0naCQnLjyZt";
+    const BLYNK_AUTH_TOKEN = "uj-8DUfu - ••••"; // Substitúe polo teu token real
+    const BLYNK_SERVER = "https://blynk.cloud/external/api/update";
 
-    function enviarComando(pin, valor) {
-      const url = `https://fra1.blynk.cloud/external/api/update?token=${token}&${pin}=${valor}`;
-      
-      fetch(url, { mode: 'no-cors', keepalive: true })
-        .then(() => console.log(`Enviado ${pin}: ${valor}`))
-        .catch(err => console.error("Erro:", err));
+    function sendMode(pin, value) {
+      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${value}`)
+        .catch(err => console.error("Error al enviar modo:", err));
+    }
+
+    function sendLatigo(pin, state) {
+      fetch(`${BLYNK_SERVER}?token=${BLYNK_AUTH_TOKEN}&${pin}=${state}`)
+        .catch(err => console.error("Error al enviar látigo:", err));
     }
   </script>
-
 </body>
 </html>
